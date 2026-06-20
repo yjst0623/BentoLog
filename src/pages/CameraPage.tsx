@@ -15,9 +15,19 @@ export default function CameraPage() {
   const onFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => setPhotoUrl(reader.result as string);
-    reader.readAsDataURL(file);
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const MAX = 800;
+      const ratio = Math.min(MAX / img.width, MAX / img.height, 1);
+      canvas.width = img.width * ratio;
+      canvas.height = img.height * ratio;
+      canvas.getContext('2d')!.drawImage(img, 0, 0, canvas.width, canvas.height);
+      setPhotoUrl(canvas.toDataURL('image/jpeg', 0.8));
+      URL.revokeObjectURL(url);
+    };
+    img.src = url;
   };
 
   const analyze = async () => {
