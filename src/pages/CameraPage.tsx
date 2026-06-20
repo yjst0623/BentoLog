@@ -49,7 +49,7 @@ export default function CameraPage() {
         },
       });
     } catch (e: any) {
-      setError(e.message);
+      setError(e.message ?? String(e));
     } finally {
       setLoading(false);
     }
@@ -72,7 +72,7 @@ export default function CameraPage() {
         {photoUrl ? (
           <>
             <img src={photoUrl} className="photo-preview" alt="プレビュー" />
-            {error && <div style={{ color: '#E53935', fontSize: 13, textAlign: 'center' }}>{error}<br />手動入力に切り替えてください</div>}
+            {error && <div style={{ color: '#E53935', fontSize: 12, textAlign: 'center', wordBreak: 'break-all', padding: '0 8px' }}>{error}</div>}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10, width: '100%' }}>
               <button className="btn-primary" onClick={analyze} disabled={loading}>
                 {loading ? '🤖 AI解析中...' : '🤖 AI解析する'}
