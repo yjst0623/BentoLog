@@ -31,6 +31,5 @@ export interface ChatMessage {
 }
 
 export interface AppSettings {
-  openaiKey: string;
-  claudeKey: string;
+  geminiKey: string;
 }

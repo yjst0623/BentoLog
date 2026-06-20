@@ -15,24 +15,25 @@ export default function SettingsPage() {
         <div className="card-title">🔑 APIキー設定</div>
         <div className="settings-note">APIキーはこのデバイスにのみ保存されます。</div>
 
-        <div className="settings-label">OpenAI APIキー</div>
+        <div className="settings-label">Gemini APIキー</div>
         <div className="key-row">
-          <input className="key-input" value={show ? s.openaiKey : mask(s.openaiKey)}
-            onChange={e => setS({ ...s, openaiKey: e.target.value })}
-            placeholder="sk-..." type={show ? 'text' : 'password'} />
+          <input className="key-input" value={show ? s.geminiKey : mask(s.geminiKey)}
+            onChange={e => setS({ ...s, geminiKey: e.target.value })}
+            placeholder="AIza..." type={show ? 'text' : 'password'} />
           <button className="toggle-btn" onClick={() => setShow(!show)}>{show ? '隠す' : '表示'}</button>
         </div>
-        <div className="hint">取得: platform.openai.com → API Keys</div>
+        <div className="hint">取得: aistudio.google.com → Get API key（無料）</div>
         <div className="hint" style={{ marginTop: 8, color: '#888' }}>写真のAI解析・献立提案に使用します</div>
       </div>
 
       <div className="card">
         <div className="card-title">💡 コストについて</div>
         <div className="info-box">
-          このアプリはBYOK方式（自分のAPIキーを使用）です。<br /><br />
-          目安（無料枠内）:<br />
-          • 写真解析: 月150回程度（GPT-4o）<br />
-          • 献立提案: 月数百回（GPT-4o mini）<br /><br />
+          Gemini APIは無料枠が大きく、通常の使用では<br />
+          ほぼ無料で利用できます。<br /><br />
+          無料枠の目安（Gemini 2.0 Flash）:<br />
+          • 写真解析: 月1500回まで無料<br />
+          • 献立提案: 月1500回まで無料<br /><br />
           APIキーなしでも手動入力で記録できます。
         </div>
       </div>

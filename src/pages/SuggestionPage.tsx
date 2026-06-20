@@ -29,13 +29,13 @@ export default function SuggestionPage() {
     const msg = (text ?? input).trim();
     if (!msg || loading) return;
     const settings = loadSettings();
-    if (!settings.openaiKey) { alert('設定画面でOpenAI APIキーを入力してください。'); return; }
+    if (!settings.geminiKey) { alert('設定画面でGemini APIキーを入力してください。'); return; }
     const newMsgs: ChatMessage[] = [...messages, { role: 'user', content: msg }];
     setMessages(newMsgs);
     setInput('');
     setLoading(true);
     try {
-      const reply = await chatWithClaude(newMsgs, settings.openaiKey, system);
+      const reply = await chatWithClaude(newMsgs, settings.geminiKey, system);
       setMessages([...newMsgs, { role: 'assistant', content: reply }]);
     } catch (e: any) { alert(e.message); }
     finally { setLoading(false); }

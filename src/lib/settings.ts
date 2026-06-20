@@ -1,7 +1,7 @@
 import type { AppSettings } from '../types';
 
 const KEY = 'bentolog_settings';
-const defaults: AppSettings = { openaiKey: '', claudeKey: '' };
+const defaults: AppSettings = { geminiKey: '' };
 
 export function loadSettings(): AppSettings {
   try {

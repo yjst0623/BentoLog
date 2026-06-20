@@ -2,31 +2,32 @@ import type { Dish } from '../types';
 import { normalizeDishName } from './db';
 import { v4 as uuidv4 } from 'uuid';
 
+const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+
 export async function analyzePhoto(
   base64: string,
-  openaiKey: string,
+  geminiKey: string,
   lunchId: string
 ): Promise<{ dishes: Dish[]; colorScore: number; nutritionScore: number; aiComment: string }> {
-  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+  const imageData = base64.replace(/^data:image\/\w+;base64,/, '');
+
+  const response = await fetch(`${GEMINI_URL}?key=${geminiKey}`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${openaiKey}` },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model: 'gpt-4o',
-      max_tokens: 800,
-      messages: [{
-        role: 'user',
-        content: [
-          { type: 'image_url', image_url: { url: base64, detail: 'low' } },
-          { type: 'text', text: `このお弁当の写真を分析してください。以下のJSON形式のみで回答してください。
+      contents: [{
+        parts: [
+          { inline_data: { mime_type: 'image/jpeg', data: imageData } },
+          { text: `このお弁当の写真を分析してください。以下のJSON形式のみで回答してください。
 
 {"dishes":[{"name":"おかず名","category":"揚げ物/卵料理/野菜/肉料理/魚料理/その他"}],"colorScore":0〜100,"nutritionScore":0〜100,"comment":"50字以内"}` },
         ],
       }],
     }),
   });
-  if (!response.ok) throw new Error(`GPT-4o エラー: ${await response.text()}`);
+  if (!response.ok) throw new Error(`Gemini エラー: ${await response.text()}`);
   const data = await response.json();
-  const content: string = data.choices?.[0]?.message?.content ?? '';
+  const content: string = data.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
   let parsed: any;
   try { parsed = JSON.parse(content); }
   catch { const m = content.match(/\{[\s\S]*\}/); if (m) parsed = JSON.parse(m[0]); else throw new Error('AI応答の解析失敗'); }
@@ -42,22 +43,25 @@ export async function analyzePhoto(
   };
 }
 
-// ブラウザからAnthropicへの直接呼び出しはCORSで不可のため、OpenAI GPT-4oで代替
 export async function chatWithClaude(
   messages: { role: 'user' | 'assistant'; content: string }[],
-  openaiKey: string,
+  geminiKey: string,
   system: string
 ): Promise<string> {
-  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+  const contents = messages.map(m => ({
+    role: m.role === 'assistant' ? 'model' : 'user',
+    parts: [{ text: m.content }],
+  }));
+
+  const response = await fetch(`${GEMINI_URL}?key=${geminiKey}`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${openaiKey}` },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model: 'gpt-4o-mini',
-      max_tokens: 600,
-      messages: [{ role: 'system', content: system }, ...messages],
+      system_instruction: { parts: [{ text: system }] },
+      contents,
     }),
   });
   if (!response.ok) throw new Error(`AI提案エラー: ${await response.text()}`);
   const data = await response.json();
-  return data.choices?.[0]?.message?.content ?? '';
+  return data.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
 }

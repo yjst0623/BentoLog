@@ -33,15 +33,15 @@ export default function CameraPage() {
   const analyze = async () => {
     if (!photoUrl) return;
     const settings = loadSettings();
-    if (!settings.openaiKey) {
-      if (confirm('OpenAI APIキーが未設定です。手動入力しますか？')) goManual();
+    if (!settings.geminiKey) {
+      if (confirm('Gemini APIキーが未設定です。手動入力しますか？')) goManual();
       return;
     }
     setLoading(true);
     setError('');
     try {
       const lunchId = uuidv4();
-      const result = await analyzePhoto(photoUrl, settings.openaiKey, lunchId);
+      const result = await analyzePhoto(photoUrl, settings.geminiKey, lunchId);
       nav('/analysis', {
         state: {
           lunch: { id: lunchId, date: format(new Date(), 'yyyy-MM-dd'), photo: photoUrl, ...result },
