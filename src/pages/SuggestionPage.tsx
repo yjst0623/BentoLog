@@ -29,13 +29,13 @@ export default function SuggestionPage() {
     const msg = (text ?? input).trim();
     if (!msg || loading) return;
     const settings = loadSettings();
-    if (!settings.claudeKey) { alert('設定画面でClaude APIキーを入力してください。'); return; }
+    if (!settings.openaiKey) { alert('設定画面でOpenAI APIキーを入力してください。'); return; }
     const newMsgs: ChatMessage[] = [...messages, { role: 'user', content: msg }];
     setMessages(newMsgs);
     setInput('');
     setLoading(true);
     try {
-      const reply = await chatWithClaude(newMsgs, settings.claudeKey, system);
+      const reply = await chatWithClaude(newMsgs, settings.openaiKey, system);
       setMessages([...newMsgs, { role: 'assistant', content: reply }]);
     } catch (e: any) { alert(e.message); }
     finally { setLoading(false); }

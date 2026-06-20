@@ -42,17 +42,22 @@ export async function analyzePhoto(
   };
 }
 
+// ブラウザからAnthropicへの直接呼び出しはCORSで不可のため、OpenAI GPT-4oで代替
 export async function chatWithClaude(
   messages: { role: 'user' | 'assistant'; content: string }[],
-  claudeKey: string,
+  openaiKey: string,
   system: string
 ): Promise<string> {
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
+  const response = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'x-api-key': claudeKey, 'anthropic-version': '2023-06-01' },
-    body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 600, system, messages }),
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${openaiKey}` },
+    body: JSON.stringify({
+      model: 'gpt-4o-mini',
+      max_tokens: 600,
+      messages: [{ role: 'system', content: system }, ...messages],
+    }),
   });
-  if (!response.ok) throw new Error(`Claude エラー: ${await response.text()}`);
+  if (!response.ok) throw new Error(`AI提案エラー: ${await response.text()}`);
   const data = await response.json();
-  return data.content?.[0]?.text ?? '';
+  return data.choices?.[0]?.message?.content ?? '';
 }
