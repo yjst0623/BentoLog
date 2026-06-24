@@ -2,7 +2,7 @@ import type { Dish } from '../types';
 import { normalizeDishName } from './db';
 import { v4 as uuidv4 } from 'uuid';
 
-const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
 
 export async function analyzePhoto(
   base64: string,
