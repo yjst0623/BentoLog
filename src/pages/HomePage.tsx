@@ -47,8 +47,8 @@ export default function HomePage() {
         <button className="action-btn" onClick={() => nav('/camera')}>
           <span className="icon">📷</span><span className="label">写真を撮る</span>
         </button>
-        <button className="action-btn" onClick={() => nav('/suggestion')}>
-          <span className="icon">💡</span><span className="label">明日の提案</span>
+        <button className="action-btn" onClick={() => nav('/recipe')}>
+          <span className="icon">📖</span><span className="label">レシピ</span>
         </button>
         <button className="action-btn" onClick={() => nav('/history')}>
           <span className="icon">📅</span><span className="label">履歴を見る</span>
