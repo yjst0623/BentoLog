@@ -11,6 +11,7 @@ export default function RecipePage() {
   const [expanded, setExpanded] = useState<string | null>(null);
   const [name, setName] = useState('');
   const [category, setCategory] = useState('その他');
+  const [ingredients, setIngredients] = useState('');
   const [memo, setMemo] = useState('');
 
   const load = async () => setRecipes(await getAllRecipes());
@@ -18,8 +19,8 @@ export default function RecipePage() {
 
   const add = async () => {
     if (!name.trim()) return;
-    await saveRecipe({ id: uuidv4(), name: name.trim(), category, memo, createdAt: new Date().toISOString() });
-    setName(''); setCategory('その他'); setMemo(''); setShowForm(false);
+    await saveRecipe({ id: uuidv4(), name: name.trim(), category, ingredients, memo, createdAt: new Date().toISOString() });
+    setName(''); setCategory('その他'); setIngredients(''); setMemo(''); setShowForm(false);
     load();
   };
 
@@ -54,10 +55,15 @@ export default function RecipePage() {
               </button>
             ))}
           </div>
-          <div className="settings-label">メモ（材料・作り方など）</div>
-          <textarea value={memo} onChange={e => setMemo(e.target.value)}
-            placeholder="例：豚バラ200g、生姜1片、醤油大2、みりん大2…"
+          <div className="settings-label">食材（1行に1つ）</div>
+          <textarea value={ingredients} onChange={e => setIngredients(e.target.value)}
+            placeholder={'豚バラ 200g\n生姜 1片\n醤油 大さじ2\nみりん 大さじ2'}
             style={{ width: '100%', boxSizing: 'border-box', minHeight: 80, padding: 8, borderRadius: 8,
+              border: '1.5px solid #ccc', fontSize: 14, fontFamily: 'inherit', resize: 'vertical' }} />
+          <div className="settings-label" style={{ marginTop: 8 }}>作り方メモ</div>
+          <textarea value={memo} onChange={e => setMemo(e.target.value)}
+            placeholder="例：肉をタレに漬けてフライパンで焼く"
+            style={{ width: '100%', boxSizing: 'border-box', minHeight: 60, padding: 8, borderRadius: 8,
               border: '1.5px solid #ccc', fontSize: 14, fontFamily: 'inherit', resize: 'vertical' }} />
           <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
             <button className="btn-primary" onClick={add} style={{ flex: 1 }}>保存する</button>
@@ -89,10 +95,20 @@ export default function RecipePage() {
                   style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: '#ccc', padding: 4 }}>🗑</button>
               </div>
             </div>
-            {expanded === r.id && r.memo && (
-              <div style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid #eee',
-                fontSize: 14, whiteSpace: 'pre-wrap', color: '#444', lineHeight: 1.6 }}>
-                {r.memo}
+            {expanded === r.id && (
+              <div style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid #eee' }}>
+                {r.ingredients && (
+                  <>
+                    <div style={{ fontSize: 12, fontWeight: 600, color: '#666', marginBottom: 4 }}>🛒 食材</div>
+                    <div style={{ fontSize: 14, color: '#444', lineHeight: 1.8, whiteSpace: 'pre-wrap', marginBottom: 8 }}>{r.ingredients}</div>
+                  </>
+                )}
+                {r.memo && (
+                  <>
+                    <div style={{ fontSize: 12, fontWeight: 600, color: '#666', marginBottom: 4 }}>📝 メモ</div>
+                    <div style={{ fontSize: 14, color: '#444', lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>{r.memo}</div>
+                  </>
+                )}
               </div>
             )}
           </div>

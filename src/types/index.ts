@@ -38,6 +38,17 @@ export interface Recipe {
   id: string;
   name: string;
   category: string;
+  ingredients: string; // 1行1食材
   memo: string;
   createdAt: string;
+}
+
+export interface PlanDish {
+  name: string;
+  recipeId?: string;
+}
+
+export interface WeeklyPlan {
+  weekStart: string; // yyyy-MM-dd (月曜日)
+  days: { [date: string]: PlanDish[] };
 }
