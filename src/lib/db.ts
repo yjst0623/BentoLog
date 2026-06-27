@@ -1,19 +1,26 @@
 import { openDB } from 'idb';
 import type { DBSchema, IDBPDatabase } from 'idb';
-import type { Lunch } from '../types';
+import type { Lunch, Recipe } from '../types';
 
 interface BentoSchema extends DBSchema {
   lunches: { key: string; value: Lunch; indexes: { date: string } };
+  recipes: { key: string; value: Recipe; indexes: { createdAt: string } };
 }
 
 let db: IDBPDatabase<BentoSchema>;
 
 async function getDB() {
   if (!db) {
-    db = await openDB<BentoSchema>('bentolog', 1, {
-      upgrade(database) {
-        const store = database.createObjectStore('lunches', { keyPath: 'id' });
-        store.createIndex('date', 'date');
+    db = await openDB<BentoSchema>('bentolog', 2, {
+      upgrade(database, oldVersion) {
+        if (oldVersion < 1) {
+          const store = database.createObjectStore('lunches', { keyPath: 'id' });
+          store.createIndex('date', 'date');
+        }
+        if (oldVersion < 2) {
+          const r = database.createObjectStore('recipes', { keyPath: 'id' });
+          r.createIndex('createdAt', 'createdAt');
+        }
       },
     });
   }
@@ -71,6 +78,22 @@ export async function getDishStats() {
     .map((v) => ({ ...v, finishRate: v.count > 0 ? Math.round((v.finished / v.count) * 100) : 0 }))
     .sort((a, b) => b.count - a.count)
     .slice(0, 20);
+}
+
+export async function getAllRecipes(): Promise<Recipe[]> {
+  const db = await getDB();
+  const all = await db.getAll('recipes');
+  return all.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
+export async function saveRecipe(recipe: Recipe) {
+  const db = await getDB();
+  await db.put('recipes', recipe);
+}
+
+export async function deleteRecipe(id: string) {
+  const db = await getDB();
+  await db.delete('recipes', id);
 }
 
 export function normalizeDishName(name: string): string {

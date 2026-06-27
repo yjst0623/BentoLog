@@ -42,26 +42,3 @@ export async function analyzePhoto(
     aiComment: parsed.comment ?? '',
   };
 }
-
-export async function chatWithClaude(
-  messages: { role: 'user' | 'assistant'; content: string }[],
-  geminiKey: string,
-  system: string
-): Promise<string> {
-  const contents = messages.map(m => ({
-    role: m.role === 'assistant' ? 'model' : 'user',
-    parts: [{ text: m.content }],
-  }));
-
-  const response = await fetch(`${GEMINI_URL}?key=${geminiKey}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      system_instruction: { parts: [{ text: system }] },
-      contents,
-    }),
-  });
-  if (!response.ok) throw new Error(`AI提案エラー: ${await response.text()}`);
-  const data = await response.json();
-  return data.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
-}

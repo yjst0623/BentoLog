@@ -33,3 +33,11 @@ export interface ChatMessage {
 export interface AppSettings {
   geminiKey: string;
 }
+
+export interface Recipe {
+  id: string;
+  name: string;
+  category: string;
+  memo: string;
+  createdAt: string;
+}
