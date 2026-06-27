@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import type { Lunch, Dish } from '../types';
-import ScoreBar from '../components/ScoreBar';
 import DishTag from '../components/DishTag';
 import { saveLunch, normalizeDishName } from '../lib/db';
 import { v4 as uuidv4 } from 'uuid';
@@ -34,17 +33,9 @@ export default function AnalysisPage() {
 
   return (
     <div className="page">
-      <div className="header"><h1>🍱 AI解析</h1></div>
+      <div className="header"><h1>🍱 おかず入力</h1></div>
 
       <img src={lunch.photo} style={{ width: '100%', maxHeight: 240, objectFit: 'cover' }} alt="" />
-
-      <div className="card">
-        <div className="card-title">AI評価</div>
-        <div className="notice">※スコアはあくまで目安です</div>
-        <ScoreBar label="彩り" score={lunch.colorScore} color="#FF6B6B" />
-        <ScoreBar label="栄養バランス（5群）" score={lunch.nutritionScore} color="#4CAF50" />
-        {lunch.aiComment && <div className="ai-comment">💬 {lunch.aiComment}</div>}
-      </div>
 
       <div className="card">
         <div className="card-title">おかず一覧</div>

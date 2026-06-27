@@ -5,13 +5,12 @@ import AnalysisPage from './pages/AnalysisPage';
 import HistoryPage from './pages/HistoryPage';
 import RecipePage from './pages/RecipePage';
 import PlanPage from './pages/PlanPage';
-import SettingsPage from './pages/SettingsPage';
 
 const TABS = [
   { path: '/', label: 'ホーム', icon: '🏠' },
+  { path: '/history', label: '履歴', icon: '📅' },
   { path: '/plan', label: '週間計画', icon: '📋' },
   { path: '/recipe', label: 'レシピ', icon: '📖' },
-  { path: '/settings', label: '設定', icon: '⚙️' },
 ];
 
 function TabBar() {
@@ -39,7 +38,6 @@ export default function App() {
         <Route path="/history" element={<><HistoryPage /><TabBar /></>} />
         <Route path="/plan" element={<><PlanPage /><TabBar /></>} />
         <Route path="/recipe" element={<><RecipePage /><TabBar /></>} />
-        <Route path="/settings" element={<><SettingsPage /><TabBar /></>} />
       </Routes>
     </BrowserRouter>
   );
